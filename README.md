@@ -1,4 +1,4 @@
-# UK NSS GRID benchmark
+# UK NSS Grid benchmark
 
 Grid_Benchmark is the benchmarking package, available at [https://github.com/aportelli/grid-benchmark].
 It is licensed under GPLv2, with a list of
@@ -102,21 +102,25 @@ Example build configurations are provided for:
 - Tursa: CUDA 11.4, GCC 9.3.0, OpenMPI 4.1.1, UCX 1.12.0
 - Daint: CUDA 12.4, GCC 14.2, HPE Cray MPICH 8.1.32
 - LUMI: ROCm 6.0.3, AMD clang 17.0.1, HPE Cray MPICH 8.1.23 (custom)
-- Durham GPU testbed: ROCm 7.0.1, AMD clang 20.0.0, OpenMPI 5.0.9, UCX 1.19.0
 
 ## Running the benchmark
 
 ### Required Tests
 
 - **Target configuration:** Grid_Benchmark should be run on a minimum of *128 GPU/GCD*.
-- **Reference FoM:** from the Tursa system using 16 nodes (64 GPU) is *8614.535 Gflops/s*.
+- **Reference FoM:** The reference FoM is from the Tursa system using 64 GPU (16 nodes) is *8614.535 Gflops/s*.
    + [JSON ("result.json") output from the reference run](https://github.com/aportelli/grid-benchmark/blob/main/results/251124/tursa/benchmark-grid-16.116878/result.json)
 
 The projected FoM submitted must give at least the same performance 
 as the reference value.
 
 To aid in testing, we provide FoM values for varying problem sizes on
-Tursa below. Tursa nodes have 2x AMD ?? EPYC CPU and 4x NVIDIA A100 GPU. 
+Tursa below. Tursa nodes have 2x AMD 7302/7413 EPYC CPU and 4x NVIDIA A100 GPU. 
+More details on the Tursa system hardware can be found at: 
+[https://epcced.github.io/dirac-docs/tursa-user-guide/hardware/]
+
+In all cases, 1 MPI process per GPU was used and 8 CPU OpenMP threads
+per MPI process.
 
 | Tursa nodes | Total GPU | Parallel decomposition | FoM (Comparison Point Gflops/s) |
 |--:|--:|--:|--:|
@@ -131,7 +135,8 @@ Tursa below. Tursa nodes have 2x AMD ?? EPYC CPU and 4x NVIDIA A100 GPU.
 The submission scripts should be written to accurately allocate NUMA affinities,
 GPU indices, CPU thread indices, and any necessary environment variables (such
 as GPU-GPU communication settings, e.g. for UCX) for the specific system and software stack in
-use, using a wrapper script if necessary (for which there are also examples in the
+use, using a wrapper script if necessary. There are example job submission scripts and launch 
+wrapper scripts in the
 [grid-benchmark systems directory](https://github.com/aportelli/grid-benchmark/tree/main/systems)).
 There are also run scripts for specific systems that may be closer to the target
 architecture in the [Grid systems directory](https://github.com/paboyle/Grid/tree/develop/systems).
@@ -174,7 +179,7 @@ The offeror should provide copies of:
 - Details of any modifications made to the Grid or Grid_Benchmark source code
 - The compilation process and configuration settings used for the benchmark results - 
   including compiler versions, dependencies used and their versions
-- The job submission scripts used (if any)
+- The job submission scripts and launch wrapper scripts used (if any)
 - A list of options passed to the benchmark code
 - The JSON results files from running the benchmarks
 
