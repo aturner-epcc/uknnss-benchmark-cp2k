@@ -212,21 +212,31 @@ are available in this repository:
 ### Correctness & Timing 
 
 Correctness can be verified using the [validate.py](./validate.py) script,
-which compares the total energy to the expected value on computed on NERSC Perlmutter
-(??).
+which compares the total energy to the expected value on computed on 
+IsambardAI (-118874.30605090 hartree).
 
-The result of the validation test is printed on the second line of the script output.
 For example:
 
 ```
-> validate.py --help
+> ./validate.py --help
 | validate.py: test output correctness for the CP2K benchmark.
 | Usage: validate.py <output_file>
 |
-> validate.py benchmark/sample_output_32nodes_isambard.log
-| Found size: NREP 6
-| Validation: PASSED ()
-| BenchmarkTime (sec): ??
+
+> ./validate.py benchmark/sample_output_32nodes_isambard.log
+
+# CP2K H2O-dft-ls benchmark validation
+
+         Number of atoms: 20736
+  Reference case # atoms: 20736
+
+    Measured: -118874.30605090 hartree
+   Reference: -118874.30605090 hartree
+  Difference: 0.00000000 hartree
+   Tolerance: 0.00000100 hartree
+  Validation: PASSED
+
+  BenchmarkTime: 42.5 s
 ```
 
 In addition, `validate.py` will also print the BenchmarkTime,
@@ -242,8 +252,8 @@ GPU jobs used four MPI processes per node, each with one GPU and 72 cores.
 The upper rows of the table describe performance change as the problem size increases.
 Lower rows describe the strong-scaling performance of CP2K when running the reference problem (NREP 6).
 
-| Size      | # Atoms | # GH200  | # MPI per GPU | # MPI | BenchmarkTime (sec) |
-| ----      | ------: | -------: | ------------: | ----: | ------------------: |
+| Size      | # Atoms | # GH200  | # MPI per GPU | # MPI | BenchmarkTime (s) |
+| ----      | ------: | -------: | ------------: | ----: | ----------------: |
 | NREP 1    |    96 |   1 |    8 |    8 |   2.3  |
 | NREP 2    |   768 |   1 |    8 |    8 |   9.0  |
 | NREP 3    |  2592 |   1 |    8 |    8 |  75.7  |
