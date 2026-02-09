@@ -3,7 +3,17 @@
 **Important:** Please do not contact the benchmark maintainers directly with any questions.
 All questions on the benchmark must be submitted via the procurement response mechanism.
 
-This repository describes the CP2K benchmark for the UK NSS procurement. CP2K is ...
+This repository describes the CP2K benchmark for the UK NSS procurement.
+CP2K is a quantum chemistry and solid state physics software package that
+can perform atomistic simulations of solid state, liquid, molecular, periodic,
+material, crystal, and biological systems. CP2K provides a general framework
+for different modeling methods such as DFT using the mixed Gaussian and plane
+waves approaches GPW and GAPW. Supported theory levels include DFTB, LDA, GGA,
+MP2, RPA, semi-empirical methods (AM1, PM3, PM6, RM1, MNDO, …), and classical
+force fields (AMBER, CHARMM, …). CP2K can do simulations of molecular dynamics,
+metadynamics, Monte Carlo, Ehrenfest dynamics, vibrational analysis, core level
+spectroscopy, energy minimization, and transition state optimization using NEB
+or dimer method. CP2K is written in Fortran 2008
 
 The specific benchmark used for this procurement is the H2O-DFT-LS benchmark available
 in the main CP2K repository on Github. This is a large system that runs a single-point
@@ -25,7 +35,7 @@ Stable
 
 ### Architectures
 
-- CPU: x86
+- CPU: x86, arm
 - GPU: NVIDIA, AMD
 
 ### Languages and programming models
@@ -142,25 +152,113 @@ cmake --build build -j 32
 
 ## Running the benchmark
 
+Input files for the CP2K H2O-dft-ls benchmark 
+are provided in the [benchmark](./benchmark) directory. The directory also
+contains example Slurm batch submission scripts from running the benchmark
+on the 
+[IsambardAI system](https://docs.isambard.ac.uk/specs/#system-specifications-isambard-ai-phase-2).
+
+Example output from the running the benchmark on IsambardAI using 32 nodes
+(128 GH200 superchip) with NVIDIA MPS (8 MPI processes per GPU) is also provided
+in the "benchmark"  directory.
+
+The parameter "NREP" in the "H2O-dft-ls.inp" file *must* be set to "6" for
+submitted results. However, this parameter sets the problem size and can be
+decreased to enable testing on smaller numbers of GPU/GCD. The number of atoms
+in the model scales cubically with NREP.
+
+**Note:** For best performance from key DBSCR routines a square number of MPI
+processes may need to be used (e.g. 64, 256, 1024).
+
 ### Required Tests
 
-- **Target configuration:** Grid_Benchmark should be run on a minimum of * ?? GPU/GCD*.
-- **Reference FoM:** The reference FoM is from the IsambardAI system using 128 GPU (32 nodes) is * ?? *.
+**Important:** The `NREP` parameter in the "H2O-dft-ls.inp" input file *must* be 
+set to "6" for the required tests.
+
+- **Target configuration:** There is *no minimum GPU/GCD count* for the CP2K H2O-dft-ls NREP6 benchmark.
+- **Reference FoM:** The reference FoM for the CP2K H2O-dft-ls NREP6 benchmark is from the IsambardAI system using 128 GPU (32 nodes) is *42 s*.
 
 **Important:** For the both the baseline build and the optimised build, the projected FoM submitted 
 must give at least the same performance as the reference value.
 
-### Benchmark execution
+### Job submission
 
-- Note that for best performance from key DBSCR routines, square number of MPI processes may need to be used (64, 121, 256, 1024)
+Make sure all the input files are in the working directory and use the
+parallel launcher to run CP2K specifying the input and output file. 
 
-- Add example job submission script link from IsambardAI
-- Add example output file from IsambardAI
+**Note:** You may need to use a wrapper script to enable proper process
+to GPU binding or to launch any multi-process per GPU services. 
 
-## Correctness Checking
+For example, on IsambardAI, the launch line looks like:
 
-- Write script to check output for correctness
-- TBC - confirm energy from PRACE UBS
+```
+srun  --cpu-bind=socket \
+     ../isambard-mps-wrapper.sh $CP2K_EXE -i ${casename}.inp -o ${resfile}
+```
+
+Using bash variables for the input filename and output filename, Slurm `srun`
+as the parallel launcher, and the `../isambard-mps-wrapper.sh` script to 
+ensure that the multi-process per GPU service is launched correctly and 
+processes are bound to the correct GPU.
+
+The full example Slurm batch script and MPS wrapper script from IsambardAI
+are available in this repository:
+
+- [IsambardAI Slurm batch script](./benchmark/submit_isambard_mps.slurm)
+- [IsambardAI MPS launch wrapper script](./benchmark/isambard-mps-wrapper.sh)
+
+## Results
+
+### Correctness & Timing 
+
+Correctness can be verified using the [validate.py](./validate.py) script,
+which compares the total energy to the expected value on computed on NERSC Perlmutter
+(??).
+
+The result of the validation test is printed on the second line of the script output.
+For example:
+
+```
+> validate.py --help
+| validate.py: test output correctness for the CP2K benchmark.
+| Usage: validate.py <output_file>
+|
+> validate.py benchmark/sample_output_32nodes_isambard.log
+| Found size: NREP 6
+| Validation: PASSED ()
+| BenchmarkTime (sec): ??
+```
+
+In addition, `validate.py` will also print the BenchmarkTime,
+which is the sole FoM for the benchmark.
+The BenchmarkTime printed by `validate.py` corresponds to the
+elapsed time reported in the CP2K output file.
+
+### Reference Performance on IsambardAI
+
+The sample data in the table below are measured BencharkTime from the IsambardAI GPU system.
+IsambardAI's GPU nodes each have four NVIDIA GH200 superchips;
+GPU jobs used four MPI processes per node, each with one GPU and 72 cores.
+The upper rows of the table describe performance change as the problem size increases.
+Lower rows describe the strong-scaling performance of CP2K when running the reference problem (NREP 6).
+
+| Size      | # Atoms | # GH200  | # MPI per GPU | # MPI | BenchmarkTime (sec) |
+| ----      | ------: | -------: | ------------: | ----: | ------------------: |
+| NREP 1    |    96 |   1 |    8 |    8 |   2.3  |
+| NREP 2    |   768 |   1 |    8 |    8 |   9.0  |
+| NREP 3    |  2592 |   1 |    8 |    8 |  75.7  |
+| NREP 4    |  6144 |   4 |    8 |   32 |  75.7  |
+| NREP 5    | 12000 |   8 |    8 |   64 | 104.9  |
+| NREP 6    | 20736 |  32 |    8 |  256 |  90.2  |
+| NREP 6    | 20736 | 128 |    8 | 1024 |  42.0* |
+
+
+The reference time was determined
+by running the reference problem on 128 IsambardAI GH200 (32 GPU nodes)
+with 8 MPI processes per GPU
+and is marked by a *.
+The projected BenchmarkTime for the target problem on the target system
+must not exceed this value.
 
 ## Reporting Results
 
