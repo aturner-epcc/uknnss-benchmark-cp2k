@@ -219,7 +219,7 @@ IsambardAI (-118874.30605090 hartree).
 
 Note: different values of NREP in the input file will produce different
 total energies for the full system. The energy check in the validate.py
-script is onlyvalid when NREP is set to 6.
+script is only valid when NREP is set to 6.
 
 For example:
 
@@ -249,6 +249,15 @@ In addition, `validate.py` will also print the BenchmarkTime,
 which is the sole FoM for the benchmark.
 The BenchmarkTime printed by `validate.py` corresponds to the
 elapsed time reported in the CP2K output file.
+
+To be a valid FoM, the following conditions must be met:
+
+- CP2K must be compiled with the commits stated above
+  and must meet any source code modification restrictions stated above
+- The value of `NREP` in the benchmark input file must be
+  set to "6"
+- The CP2K input files must not be modified from the versions
+  available in this repository
 
 ### Reference Performance on IsambardAI
 
