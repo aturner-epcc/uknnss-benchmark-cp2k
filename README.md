@@ -35,17 +35,6 @@ Stable
 
 [CP2K](https://github.com/cp2k/cp2k)
 
-### Architectures
-
-- CPU: x86, arm
-- GPU: NVIDIA, AMD
-
-### Languages and programming models
-
-- Programming languages: Fortran
-- Parallel models: MPI, OpenMP
-- Accelerator offload models: CUDA, HIP
-
 ## Building the benchmark
 
 **Important:** All results submitted should be based on the following repository commits:
@@ -292,7 +281,7 @@ must not exceed this value.
 
 ## Reporting Results
 
-The offeror should provide copies of:
+The bidder should provide copies of:
 
 - Details of any modifications made to the CP2K or dependencies source code
 - The compilation process and configuration settings used for the benchmark results - 
