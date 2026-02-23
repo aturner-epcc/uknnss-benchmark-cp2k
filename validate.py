@@ -3,7 +3,7 @@
 import sys
 
 def usage():
-    print("validate.py: test output correctness for the UK-NSS CP2K benchmark.")
+    print("validate.py: test output correctness for the UK-NNSS CP2K benchmark.")
     print("Usage: validate.py <output_file>")
 #usage
 

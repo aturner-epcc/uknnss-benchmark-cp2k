@@ -1,9 +1,9 @@
-# UK NSS CP2K benchmark
+# UK NNSS CP2K benchmark
 
 **Important:** Please do not contact the benchmark maintainers directly with any questions.
 All questions on the benchmark must be submitted via the procurement response mechanism.
 
-This repository describes the CP2K benchmark for the UK NSS procurement.
+This repository describes the CP2K benchmark for the UK NNSS procurement.
 CP2K is a quantum chemistry and solid state physics software package that
 can perform atomistic simulations of solid state, liquid, molecular, periodic,
 material, crystal, and biological systems. CP2K provides a general framework
@@ -40,7 +40,7 @@ Stable
 **Important:** All results submitted should be based on the following repository commits:
 
 - CP2K repository: [release version 2026.1 (757bb76)](https://github.com/cp2k/cp2k/releases/tag/v2026.1)
-- H2O-DFT-LS benchmark: [most recent version from this benchmark description repository](https://github.com/aturner-epcc/uknss-benchmark-cp2k)
+- H2O-DFT-LS benchmark: [most recent version from this benchmark description repository](https://github.com/aturner-epcc/uknnss-benchmark-cp2k)
 
 Any modifications made to the source code for the baseline build or the optimised build must be 
 shared as part of the offerer submission.
